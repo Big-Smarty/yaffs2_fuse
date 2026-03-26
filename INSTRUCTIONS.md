@@ -6,6 +6,17 @@ cargo build --release
 ```
 
 # How to run
-```rust
-sudo target/release/yaffs2_fuse
+```bash
+sudo ./target/release/yaffs2_fuse --image <IMAGE> --mount-point <MOUNT_POINT>
 ```
+
+# How to run prebuilt binary
+```bash
+sudo ./yaffs2_fuse --image <IMAGE> --mount-point <MOUNT_POINT>
+```
+
+# Example:
+```bash
+sudo ./yaffs2_fuse --image nexus.nandump --mount-point /mnt
+```
+
