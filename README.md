@@ -11,3 +11,5 @@ I also hardcoded the path to the nandump and to the mount point for now. so yeah
 # UPDATE
 While my driver is fuckass bullshit, it turns out it can properly read the files. ITS JUST THAT THE NANDUMP CONTAINS FUCKING GARBAGE FILES.
 This has been verified with SleuthsKit fls and icat to the best of my ability.
+
+See the [instructions](https://github.com/Big-Smarty/yaffs2_fuse/blob/main/INSTRUCTIONS.md)
