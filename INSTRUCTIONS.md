@@ -26,6 +26,14 @@ Options:
 sudo ./target/release/yaffs2_fuse --image nexus.nanddump --mount-point /mnt
 ```
 
+# HOW TO USE
+The mount point can only be accessed as root. Thus, you should run:
+```bash
+sudo su
+cd /mnt
+<do whatever you want>
+```
+
 # Defaults
 The YAFFS2 spec has very very loose definitions of the OOB tag on-drive structure.
 It also does not contain any magic values or whatever to indicate the layout.

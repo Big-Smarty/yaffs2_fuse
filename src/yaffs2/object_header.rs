@@ -7,7 +7,6 @@ pub struct Header {
     pub object_type: FileType,
     pub parent_id: INodeNo,
     pub name: String,
-    pub alias: String,
     pub mode: u32,
     pub uid: u32,
     pub gid: u32,
@@ -24,7 +23,6 @@ impl Default for Header {
             object_type: FileType::Directory,
             parent_id: YAFFS_OBJECTID_ROOT,
             name: Default::default(),
-            alias: Default::default(),
             mode: Default::default(),
             uid: Default::default(),
             gid: Default::default(),
@@ -53,7 +51,6 @@ impl From<ObjectHeader> for Header {
                 .collect::<String>()
                 .trim_matches('\0')
                 .to_string(),
-            alias: value.alias.iter().map(|x| *x as char).collect(),
             mode: (S_IFDIR as u32 | 0o777),
             uid: value.uid,
             gid: value.gid,

@@ -1,8 +1,6 @@
-use std::collections::LinkedList;
-
 use fuser::INodeNo;
 
-use crate::yaffs2::{object_header::Header, tree::Tree};
+use crate::yaffs2::object_header::Header;
 
 #[derive(Clone, Debug)]
 pub struct INode {

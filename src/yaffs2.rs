@@ -2,24 +2,17 @@ pub mod config;
 mod consts;
 mod file_data;
 mod inode;
-mod object;
 mod object_header;
 mod object_type;
 mod tags;
-mod tree;
-mod util;
 
 use config::*;
 use consts::*;
 use inode::*;
 use log::{error, info, trace};
 use object_header::*;
-use object_type::*;
-use tags::*;
-use util::*;
 
 use std::{
-    collections::LinkedList,
     io,
     time::{Duration, SystemTime},
 };
@@ -28,9 +21,10 @@ use dashmap::DashMap;
 use fuser::{Errno, FileAttr, FileType, Filesystem, FopenFlags, Generation, INodeNo};
 use memmap2::Mmap;
 
-use consts::*;
-
-use crate::yaffs2::{file_data::FileData, object::Object, tree::Tree};
+use crate::yaffs2::{
+    file_data::FileData,
+    tags::{PackedTags, Tags},
+};
 
 pub struct Yaffs2 {
     image: Mmap,
@@ -96,18 +90,6 @@ impl Yaffs2 {
         }
     }
 
-    fn get_block_n(&self, ino: INodeNo, logical_block: u64) -> Option<Vec<u8>> {
-        todo!()
-    }
-
-    fn find_or_create_inode(&mut self, ino: INodeNo) -> &mut INode {
-        todo!()
-    }
-
-    fn add_data_block(&mut self, ino: INodeNo, logical_block: u64, physical_block: u64) {
-        todo!()
-    }
-
     fn cread(&self, chunk: usize) -> &[u8] {
         let physical = chunk * (self.config.page_size + self.config.extra_size);
         let out = &self.image[physical..physical + self.config.page_size + self.config.extra_size];
@@ -126,7 +108,7 @@ impl Filesystem for Yaffs2 {
         self.objects.insert(YAFFS_OBJECTID_ROOT, root_dir);
         self.hierarchy.insert(YAFFS_OBJECTID_ROOT, Vec::new());
 
-        let mut files: DashMap<u64, FileData> = DashMap::new();
+        let files: DashMap<u64, FileData> = DashMap::new();
 
         for block in 0..self.config.nblocks {
             for chunk in 0..self.config.chunks_per_block {
@@ -159,7 +141,7 @@ impl Filesystem for Yaffs2 {
 
                         let mut file = files
                             .entry(tags.object_id)
-                            .or_insert_with(|| FileData::new(INodeNo(tags.object_id)));
+                            .or_insert_with(|| FileData::new(INodeNo(tags.object_id), self.config));
 
                         if tags.is_header {
                             trace!("Found object header for object_id: {}", tags.object_id);
