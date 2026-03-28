@@ -2,16 +2,14 @@ use std::collections::LinkedList;
 
 use fuser::INodeNo;
 
-use crate::yaffs2::{object_header::ObjectHeader, tree::Tree};
+use crate::yaffs2::{object_header::Header, tree::Tree};
 
 #[derive(Clone, Debug)]
 pub struct INode {
-    pub header: ObjectHeader,
+    pub header: Header,
     pub object_id: INodeNo,
-    pub sequence_number: u32,
-    pub children: LinkedList<INodeNo>,
-    pub block_tree: Tree,
-    pub block_tree_height: u64,
+    pub sequence_number: u64,
+    pub data: Option<Vec<u8>>,
 }
 
 impl Default for INode {
@@ -20,9 +18,7 @@ impl Default for INode {
             header: Default::default(),
             object_id: INodeNo(0),
             sequence_number: Default::default(),
-            children: Default::default(),
-            block_tree: Default::default(),
-            block_tree_height: Default::default(),
+            data: None,
         }
     }
 }

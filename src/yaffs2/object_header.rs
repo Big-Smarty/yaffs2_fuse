@@ -1,4 +1,70 @@
-use crate::yaffs2::consts::*;
+use fuser::{FileType, INodeNo};
+
+use crate::yaffs2::{consts::*, object_type::ObjectType};
+
+#[derive(Clone, Debug)]
+pub struct Header {
+    pub object_type: FileType,
+    pub parent_id: INodeNo,
+    pub name: String,
+    pub alias: String,
+    pub mode: u32,
+    pub uid: u32,
+    pub gid: u32,
+    pub atime: u32,
+    pub mtime: u32,
+    pub ctime: u32,
+    pub size: u32,
+    pub rdev: u32,
+}
+
+impl Default for Header {
+    fn default() -> Self {
+        Self {
+            object_type: FileType::Directory,
+            parent_id: YAFFS_OBJECTID_ROOT,
+            name: Default::default(),
+            alias: Default::default(),
+            mode: Default::default(),
+            uid: Default::default(),
+            gid: Default::default(),
+            atime: Default::default(),
+            mtime: Default::default(),
+            ctime: Default::default(),
+            size: Default::default(),
+            rdev: Default::default(),
+        }
+    }
+}
+
+impl From<ObjectHeader> for Header {
+    fn from(value: ObjectHeader) -> Self {
+        Self {
+            object_type: if value.object_type == ObjectType::YaffsObjectTypeDirectory as u32 {
+                FileType::Directory
+            } else {
+                FileType::RegularFile
+            },
+            parent_id: INodeNo(value.parent_obj_id as u64),
+            name: value
+                .name
+                .iter()
+                .map(|x| *x as char)
+                .collect::<String>()
+                .trim_matches('\0')
+                .to_string(),
+            alias: value.alias.iter().map(|x| *x as char).collect(),
+            mode: (S_IFDIR as u32 | 0o777),
+            uid: value.uid,
+            gid: value.gid,
+            atime: value.atime,
+            mtime: value.mtime,
+            ctime: value.ctime,
+            size: value.size,
+            rdev: value.rdev,
+        }
+    }
+}
 
 #[repr(C, packed)]
 #[derive(Copy, Clone, Debug)]

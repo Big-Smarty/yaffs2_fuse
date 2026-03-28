@@ -1,5 +1,6 @@
 /target
-nexus.nandump
+./nexus.nandump
+./a2019-gh2-full.bin
 
 
 # Added by cargo
